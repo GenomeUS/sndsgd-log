@@ -1,0 +1,8 @@
+.DS_Store
+.fuse_hidden*
+docs
+vendor
+composer.lock
+bin/dev.php
+tests/writer/mailgun.config.php
+
