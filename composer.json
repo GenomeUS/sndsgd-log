@@ -1,6 +1,6 @@
 {
    "name": "sndsgd/log",
-   "description": "A collection of tools for logging messages",
+   "description": "A collection of tools for logging data",
    "type": "library",
    "homepage": "https://github.com/sndsgd/sndsgd-log",
    "license": "MIT",
