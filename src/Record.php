@@ -6,16 +6,25 @@ use \InvalidArgumentException;
 
 
 /**
- * A represenation of a single record within a log of one or more records
+ * A representation of a single record within a log of one or more records
  */
 class Record
 {
+   use \sndsgd\util\data\Manager;
+
    /**
-    * A human readable name for the log
-    * 
-    * @var string
+    * Convenience method to create a log record
+    *
+    * @param string $name The log name
+    * @param string $message The log message content
+    * @return sndsgd\log\Record
     */
-   protected $name = 'error';
+   public static function create($name, $message)
+   {
+      return (new Record)
+         ->setName($name)
+         ->setMessage($message);
+   }
 
    /**
     * The time in milliseconds the log instance was created
@@ -25,6 +34,13 @@ class Record
    protected $timestamp;
 
    /**
+    * A human readable name for the log
+    * 
+    * @var string
+    */
+   protected $name = 'error';
+
+   /**
     * A human readable message
     * 
     * @var string
@@ -32,84 +48,15 @@ class Record
    protected $message = null;
 
    /**
-    * Data to include with the record
-    * 
-    * @var array.<string,mixed>
+    * Create a log record instance
+    *
+    * @param float|string $timestamp The timestamp of the log creation
     */
-   protected $data = [];
-
-   /**
-    * Create a new message instance
-    * 
-    * @param string|null $message
-    */
-   public function __construct($message = null)
+   public function __construct($timestamp = null)
    {
-      $this->timestamp = microtime(true);
-      if ($message !== null) {
-         $this->setMessage($message);
-      }
-   }
-
-   /**
-    * Set the record message
-    * 
-    * @param string $message The message
-    * @return sndsgd\log\Record this log instance
-    */
-   public function setMessage($message)
-   {
-      if (!is_string($message)) {
-         throw new InvalidArgumentException(
-            "invalid value provided for 'message'; expecting a string"
-         );
-      }
-
-      $this->message = preg_replace(
-         ["','", "/\s+/"],
-         ["', '", ' '],
-         $message
-      );
-
-      return $this;
-   }
-
-   /**
-    * Get the record message
-    * 
-    * @return string
-    */
-   public function getMessage()
-   {
-      return ($this->message === null) ? '' : $this->message;
-   }
-
-   /**
-    * @param string $name - a custom name for the log
-    * @return sndsgd\log\Record this object instance
-    */
-   public function setName($name)
-   {
-      if (
-         !is_string($name) ||
-         preg_match('/[^a-z0-9-_]/i', $name) === 1
-      ) {
-         throw new InvalidArgumentException(
-            "invalid value provided for 'name'; expecting a string that ".
-            "contains only use alphanumeric characters, underscore (_), ".
-            "and dash (-)"
-         );
-      }
-      $this->name = $name;
-      return $this;
-   }
-
-   /**
-    * @return string
-    */
-   public function getName()
-   {
-      return $this->name;
+      $this->timestamp = ($timestamp === null)
+         ? microtime(true)
+         : floatval($timestamp);      
    }
 
    /**
@@ -133,40 +80,59 @@ class Record
    }
 
    /**
-    * Add data to the record
-    * 
-    * @param array.<string,mixed>|string $key
-    * @param mixed $value
-    * @return sndsgd\log\Record
+    * @param string $name The name for the log 
+    * @return sndsgd\log\Record this object instance
     */
-   public function addData($key, $value = null)
+   public function setName($name)
    {
-      if (is_string($key) && $value !== null) {
-         $this->data[$key] = $value;
-      }
-      else if (is_array($key) && $value === null) {
-         foreach ($key as $k => $v) {
-            $this->data[$k] = $v;
-         }
-      }
-      else {
+      if (
+         !is_string($name) ||
+         preg_match('/[^a-z0-9-_]/i', $name) === 1
+      ) {
          throw new InvalidArgumentException(
-            "invalid arguments provided; expecting either a single array ".
-            "of data, or a separate key and value"
+            "invalid value provided for 'name'; expecting a string that ".
+            "contains only alphanumeric characters, underscore (_), ".
+            "and dash (-)"
          );
       }
-
+      $this->name = $name;
       return $this;
    }
 
    /**
-    * Get the record data
-    * 
-    * @return array.<string,mixed>|null
+    * @return string
     */
-   public function getData()
+   public function getName()
    {
-      return (count($this->data) === 0) ? null : $this->data;
+      return $this->name;
+   }
+
+   /**
+    * Set the record message
+    * 
+    * @param string $message The message
+    * @return sndsgd\log\Record this log instance
+    */
+   public function setMessage($message)
+   {
+      if (!is_string($message)) {
+         throw new InvalidArgumentException(
+            "invalid value provided for 'message'; expecting a string"
+         );
+      }
+
+      $this->message = trim(preg_replace('~\s+~', ' ', $message));
+      return $this;
+   }
+
+   /**
+    * Get the record message
+    * 
+    * @return string
+    */
+   public function getMessage()
+   {
+      return ($this->message === null) ? '' : $this->message;
    }
 
    /**

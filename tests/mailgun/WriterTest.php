@@ -1,14 +1,16 @@
 <?php
 
-use sndsgd\log\Record;
+namespace sndsgd\log\mailgun;
+
+use \sndsgd\log\Record;
 use \sndsgd\util\Config;
 
 
-class MailgunTest extends PHPUnit_Framework_TestCase
+class WriterTest extends \PHPUnit_Framework_TestCase
 {
    public static function loadConfig()
    {
-      $path = __DIR__.'/mailgun.config.php';
+      $path = __DIR__.'/config.php';
       if (file_exists($path)) {
          Config::init(require $path);
          return true;
@@ -18,7 +20,7 @@ class MailgunTest extends PHPUnit_Framework_TestCase
 
    public static function loadFakeConfig()
    {
-      $path = __DIR__.'/mailgun.fake-config.php';
+      $path = __DIR__.'/fake-config.php';
       if (file_exists($path)) {
          Config::init(require $path);
          return true;
@@ -28,10 +30,9 @@ class MailgunTest extends PHPUnit_Framework_TestCase
 
    public function setUp()
    {
-      $this->r = (new Record('testing...'))
-         ->setName('test')
-         ->addData('key', 'value')
-         ->addData('multi-line', "one\ntwo");
+      $this->r = Record::create('test', 'this is the message');
+      $this->r->addData('key', 'value');
+      $this->r->addData('multi-line', "one\ntwo");
    }
 
    /**
@@ -39,13 +40,13 @@ class MailgunTest extends PHPUnit_Framework_TestCase
     */
    public function testWriteMissingConfigException()
    {
-      $this->r->write('sndsgd\\log\\writer\\Mailgun');
+      $this->r->write('sndsgd\\log\\mailgun\\Writer');
    }
 
    public function testSendEmail()
    {
       if (self::loadConfig()) {
-         $this->r->write('sndsgd\\log\\writer\\Mailgun');
+         $this->r->write('sndsgd\\log\\mailgun\\Writer');
       }
    }
 
@@ -55,7 +56,7 @@ class MailgunTest extends PHPUnit_Framework_TestCase
    public function testSendEmailException()
    {
       if (self::loadFakeConfig()) {
-         $this->r->write('sndsgd\\log\\writer\\Mailgun');
+         $this->r->write('sndsgd\\log\\mailgun\\Writer');
       }
    }
 }

@@ -4,5 +4,5 @@ docs
 vendor
 composer.lock
 bin/dev.php
-tests/writer/mailgun.config.php
+tests/mailgun/config.php
 

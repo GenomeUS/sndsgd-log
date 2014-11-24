@@ -1,10 +1,9 @@
 <?php
 
-namespace sndsgd\log\writer;
+namespace sndsgd\log\mailgun;
 
 use \Exception;
 use \Mailgun\Mailgun as MG;
-use \sndsgd\log\Writer;
 use \sndsgd\util\Config;
 use \sndsgd\util\Json;
 
@@ -14,7 +13,7 @@ use \sndsgd\util\Json;
  * 
  * @see [http://www.mailgun.com/](http://www.mailgun.com/)
  */
-class Mailgun extends Writer
+class Writer extends \sndsgd\log\Writer
 {
    /**
     * {@inheritdoc}
