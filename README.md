@@ -3,7 +3,7 @@
 [![Latest Version](https://img.shields.io/github/release/sndsgd/sndsgd-log.svg?style=flat-square)](https://github.com/sndsgd/sndsgd-log/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/sndsgd/sndsgd-log/LICENSE)
 [![Build Status](https://img.shields.io/travis/sndsgd/sndsgd-log/master.svg?style=flat-square)](https://travis-ci.org/sndsgd/sndsgd-log)
-
+[![Total Downloads](https://img.shields.io/packagist/dt/sndsgd/log.svg?style=flat-square)](https://packagist.org/packages/sndsgd/log)
 
 ## Requirements
 
