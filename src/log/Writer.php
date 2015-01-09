@@ -16,11 +16,11 @@ abstract class Writer
    protected $record;
 
    /**
-    * Create a new writer instance
+    * Set the log record
     *
     * @param sndsgd\log\Record $record
     */
-   public function __construct(Record $record)
+   public function setRecord(Record $record)
    {
       $this->record = $record;
    }

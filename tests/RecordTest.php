@@ -20,15 +20,6 @@ class RecordTest extends PHPUnit_Framework_TestCase
       $this->assertEquals($message, $r->getMessage());
    }
 
-   public function testConstructor()
-   {
-      $r = new Record(123.4);
-      $this->assertEquals(123.4, $r->getTimestamp());
-
-      $r = new Record('123.4');
-      $this->assertEquals(123.4, $r->getTimestamp());      
-   }
-
    public function testSetGetName()
    {
       $this->r->setName('test');
@@ -91,6 +82,22 @@ class RecordTest extends PHPUnit_Framework_TestCase
          'three' => 3
       ]);
       $this->assertEquals(['one'=>1,'two'=>2,'three'=>3], $this->r->getData());
+   }
+
+   /**
+    * @expectedException InvalidArgumentException
+    */
+   public function testWriteInvalidStringArgument()
+   {
+      $this->r->write('invalid');
+   }
+
+   /**
+    * @expectedException InvalidArgumentException
+    */
+   public function testWriteInvalidObjectArgument()
+   {
+      $this->r->write(new \StdClass);
    }
 }
 

@@ -3,7 +3,7 @@
 namespace sndsgd\log\mailgun;
 
 use \Exception;
-use \Mailgun\Mailgun as MG;
+use \Mailgun\Mailgun;
 use \sndsgd\util\Config;
 use \sndsgd\util\Json;
 
@@ -20,8 +20,6 @@ class Writer extends \sndsgd\log\Writer
     */
    public function write()
    {
-      $emailBody = $this->createEmailBody();
-
       $cfg = Config::getAs([
          'sndsgd.log.writer.mailgun.apiKey' => 'apikey',
          'sndsgd.log.writer.mailgun.domain' => 'domain',
@@ -32,19 +30,28 @@ class Writer extends \sndsgd\log\Writer
       if (!is_array($cfg)) {
          throw new Exception("failed to email log record; $cfg");
       }
-      
-      try {
-         $mg = new MG($cfg['apikey']);
-         $response = $mg->sendMessage($cfg['domain'], [
-            'from' => $cfg['sender'],
-            'to' => $cfg['recipient'],
-            'subject' => 'new log record: '.$this->record->getName(),
-            'text' => $emailBody
-         ]);
-      }
-      catch (Exception $ex) {
-         throw new Exception("failed to email log record; ".$ex->getMessage());
-      }
+
+      $mailgun = new Mailgun($cfg['apikey']);
+      return $this->sendMessage($mailgun, $cfg);
+   }
+
+   /**
+    * Send the message
+    *
+    * Note: this method exists, and is public so it can be mocked
+    * @param Mailgun $mailgun
+    * @param array.<string,string> $cfg Config values for Mailgun
+    * @return boolean
+    * @throws Exception If the email could not be sent
+    */
+   public function sendMessage(Mailgun $mailgun, $cfg)
+   {
+      return $mailgun->sendMessage($cfg['domain'], [
+         'from' => $cfg['sender'],
+         'to' => $cfg['recipient'],
+         'subject' => 'new log record: '.$this->record->getName(),
+         'text' => $this->createEmailBody()
+      ]);
    }
 
    /**

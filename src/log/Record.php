@@ -6,18 +6,18 @@ use \InvalidArgumentException;
 
 
 /**
- * A representation of a single record within a log of one or more records
+ * A representation of a single record within a collection of records
  */
 class Record
 {
    use \sndsgd\util\data\Manager;
 
    /**
-    * Convenience method to create a log record
+    * Convenience method to create a log
     *
     * @param string $name The log name
     * @param string $message The log message content
-    * @return sndsgd\log\Record
+    * @return sndsgd\Log
     */
    public static function create($name, $message)
    {
@@ -52,11 +52,9 @@ class Record
     *
     * @param float|string $timestamp The timestamp of the log creation
     */
-   public function __construct($timestamp = null)
+   public function __construct()
    {
-      $this->timestamp = ($timestamp === null)
-         ? microtime(true)
-         : floatval($timestamp);      
+      $this->timestamp = microtime(true);
    }
 
    /**
@@ -142,8 +140,24 @@ class Record
     */
    public function write()
    {
-      foreach (func_get_args() as $class) {
-         $writer = new $class($this);
+      foreach (func_get_args() as $writer) {
+         if (is_string($writer)) {
+            if (!class_exists($writer)) {
+               throw new InvalidArgumentException(
+                  "invalid value provided for 'writer'; expecting a subclass ".
+                  "of sndsgd\log\Writer as string"
+               );
+            }
+            $writer = new $writer;
+         }
+         else if (($writer instanceof Writer) === false) {
+            throw new InvalidArgumentException(
+               "invalid value provided for 'writer'; expecting either and ".
+               "instance of sndsgd\log\Writer or a subclass name as string"
+            );
+         }
+
+         $writer->setRecord($this);
          $writer->write();
       }
    }

@@ -37,6 +37,15 @@ class WriterTest extends \PHPUnit_Framework_TestCase
       $record->write('sndsgd\\log\\file\\Writer');
    }
 
+   public function testWriteWithObject()
+   {
+      list($vdir, $path) = $this->createVfs();
+      Config::set('sndsgd.log.file.dir', $path);
+      
+      $record = Record::create('test', 'this is the log message');
+      $record->write(new \sndsgd\log\file\Writer);
+   }
+
    /**
     * @expectedException Exception
     */
