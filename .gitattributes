@@ -5,3 +5,4 @@
 /apigen.neon                        export-ignore
 /phpunit.xml                        export-ignore
 /tests                              export-ignore
+/bin/aftertest                      export-ignore
