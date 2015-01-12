@@ -1,9 +1,11 @@
 <?php
 
-use sndsgd\log\Record;
+namespace sndsgd\log;
+
+use \StdClass;
 
 
-class RecordTest extends PHPUnit_Framework_TestCase
+class RecordTest extends \PHPUnit_Framework_TestCase
 {
    public function setUp()
    {
@@ -97,7 +99,7 @@ class RecordTest extends PHPUnit_Framework_TestCase
     */
    public function testWriteInvalidObjectArgument()
    {
-      $this->r->write(new \StdClass);
+      $this->r->write(new StdClass);
    }
 }
 

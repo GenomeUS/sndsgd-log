@@ -1,8 +1,5 @@
 language: php
 
-env:
-  - COVERALLS_PHP_VERSION="5.5"
-
 php:
   - 5.4
   - 5.5
@@ -14,9 +11,6 @@ matrix:
   allow_failures:
     - php: hhvm
     - php: hhvm-nightly
-
-before_install:
-  - composer self-update
 
 install:
   - composer install --no-interaction --prefer-source --dev

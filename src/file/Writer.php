@@ -5,9 +5,9 @@ namespace sndsgd\log\file;
 use \Exception;
 use \sndsgd\log\FileInterface;
 use \sndsgd\log\Record;
-use \sndsgd\util\Config;
-use \sndsgd\util\File;
-use \sndsgd\util\Path;
+use \sndsgd\Config;
+use \sndsgd\File;
+use \sndsgd\Path;
 
 
 /**

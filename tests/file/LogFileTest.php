@@ -1,11 +1,12 @@
 <?php
 
+namespace sndsgd\log\file;
+
 use \sndsgd\log\Record;
-use \sndsgd\log\file\LogFile;
-use \sndsgd\util\Config;
+use \sndsgd\Config;
 
 
-class LogFileTest extends PHPUnit_Framework_TestCase
+class LogFileTest extends \PHPUnit_Framework_TestCase
 {
    /**
     * @covers \sndsgd\log\file\LogFile::getPathFromName
@@ -54,6 +55,5 @@ class LogFileTest extends PHPUnit_Framework_TestCase
 
       $this->assertNull(LogFile::decodeRecord('invalid | log'));
    }
-
 }
 

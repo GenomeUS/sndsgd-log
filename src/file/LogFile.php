@@ -3,7 +3,7 @@
 namespace sndsgd\log\file;
 
 use \sndsgd\log\Record;
-use \sndsgd\util\Config;
+use \sndsgd\Config;
 
 /**
  * Utility methods for working with log files

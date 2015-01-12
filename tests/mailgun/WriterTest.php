@@ -4,16 +4,28 @@ namespace sndsgd\log\mailgun;
 
 use \Mailgun\Mailgun;
 use \sndsgd\log\Record;
-use \sndsgd\util\Config;
+use \sndsgd\Config;
 
 
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
+   public static function setUpBeforeClass()
+   {
+      Config::init([
+         'sndsgd.log.writer.mailgun.apiKey' => 'blegh',
+         'sndsgd.log.writer.mailgun.domain' => 'example.com',
+         'sndsgd.log.writer.mailgun.senderAddress' => 'test@example.com',
+         'sndsgd.log.writer.mailgun.recipientAddress' => 'nobody@example.com'
+      ]);
+   }
+
+   public static function tearDownAfterClass()
+   {
+      Config::init();
+   }
+
    public function setUp()
    {
-      $path = __DIR__.'/../resources/fake-mailgun-config.php';
-      Config::init(require $path);
-
       $this->r = Record::create('test', 'this is the message');
       $this->r->addData('key', 'value');
       $this->r->addData('multi-line', "one\ntwo");

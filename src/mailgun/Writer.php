@@ -4,8 +4,8 @@ namespace sndsgd\log\mailgun;
 
 use \Exception;
 use \Mailgun\Mailgun;
-use \sndsgd\util\Config;
-use \sndsgd\util\Json;
+use \sndsgd\Config;
+use \sndsgd\Json;
 
 
 /**

@@ -10,7 +10,7 @@ use \InvalidArgumentException;
  */
 class Record
 {
-   use \sndsgd\util\data\Manager;
+   use \sndsgd\data\Manager;
 
    /**
     * Convenience method to create a log

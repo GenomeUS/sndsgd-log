@@ -4,7 +4,7 @@ namespace sndsgd\log\file;
 
 use \Exception;
 use \InvalidArgumentException;
-use \sndsgd\util\File;
+use \sndsgd\File;
 
 
 /**

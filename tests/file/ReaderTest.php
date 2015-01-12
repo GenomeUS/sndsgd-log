@@ -1,14 +1,14 @@
 <?php
 
+namespace sndsgd\log\file;
+
 use \org\bovigo\vfs\vfsStream;
 use \sndsgd\log\Record;
-use \sndsgd\log\file\LogFile;
-use \sndsgd\log\file\Reader;
-use \sndsgd\util\Config;
-use \sndsgd\util\Temp;
+use \sndsgd\Config;
+use \sndsgd\Temp;
 
 
-class ReaderTest extends PHPUnit_Framework_TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
    /**
     * @covers nothing

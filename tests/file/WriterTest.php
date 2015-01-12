@@ -4,8 +4,8 @@ namespace sndsgd\log\file;
 
 use \org\bovigo\vfs\vfsStream;
 use \sndsgd\log\Record;
-use \sndsgd\util\Config;
-use \sndsgd\util\Temp;
+use \sndsgd\Config;
+use \sndsgd\Temp;
 
 
 class WriterTest extends \PHPUnit_Framework_TestCase
