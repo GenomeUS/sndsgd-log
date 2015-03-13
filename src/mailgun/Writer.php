@@ -3,6 +3,7 @@
 namespace sndsgd\log\mailgun;
 
 use \Exception;
+use \InvalidArgumentException;
 use \Mailgun\Mailgun;
 use \sndsgd\Config;
 use \sndsgd\Json;
@@ -16,23 +17,102 @@ use \sndsgd\Json;
 class Writer extends \sndsgd\log\Writer
 {
    /**
+    * The email sender (overrides the config sender)
+    * 
+    * @var string
+    */
+   protected $sender;
+
+   /**
+    * The email recipient (overrides the config recipient)
+    * 
+    * @var string
+    */
+   protected $recipient;
+
+   /**
+    * The email subject
+    * 
+    * @var string
+    */
+   protected $subject;
+
+
+   /**
     * {@inheritdoc}
     */
    public function write()
    {
-      $cfg = Config::getAs([
-         'sndsgd.log.writer.mailgun.apiKey' => 'apikey',
-         'sndsgd.log.writer.mailgun.domain' => 'domain',
-         'sndsgd.log.writer.mailgun.senderAddress' => 'sender',
-         'sndsgd.log.writer.mailgun.recipientAddress' => 'recipient'
-      ]);
+      $apikey = Config::getRequired("sndsgd.log.writer.mailgun.apiKey");
+      return $this->sendMessage(
+         new Mailgun($apikey),
+         $this->getSender(),
+         $this->getRecipient(),
+         $this->getSubject(),
+         $this->createEmailBody()
+      );
+   }
 
-      if (!is_array($cfg)) {
-         throw new Exception("failed to email log record; $cfg");
+   /**
+    * Override the sender address specified in the config
+    * 
+    * @param string $email
+    */
+   public function setSender($email)
+   {
+      $this->sender = $this->validateEmail($email);
+   }
+
+   /**
+    * Override the recipient address specified in the config
+    * 
+    * @param string $email
+    */
+   public function setRecipient($email)
+   {
+      $this->recipient = $this->validateEmail($email);
+   }
+
+   private function validateEmail($email)
+   {
+      $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+      if ($email === false) {
+         throw new InvalidArgumentException(
+            "invalid value provided for 'email'; ".
+            "expecting a valid email address as string"
+         );
       }
+      return $email;
+   }
 
-      $mailgun = new Mailgun($cfg['apikey']);
-      return $this->sendMessage($mailgun, $cfg);
+   /**
+    * Set the message subject
+    * @param string $subject
+    */
+   public function setSubject($subject)
+   {
+      $this->subject = $subject;
+   }
+
+   private function getSender()
+   {
+      return ($this->sender !== null) 
+         ? $this->sender
+         : Config::getRequired("sndsgd.log.writer.mailgun.senderAddress");
+   }
+
+   private function getRecipient()
+   {
+      return ($this->recipient !== null) 
+         ? $this->recipient
+         : Config::getRequired("sndsgd.log.writer.mailgun.recipientAddress");
+   }
+
+   private function getSubject()
+   {
+      return ($this->subject !== null)
+         ? $this->subject
+         : "new log record: ".$this->record->getName();
    }
 
    /**
@@ -44,13 +124,14 @@ class Writer extends \sndsgd\log\Writer
     * @return boolean
     * @throws Exception If the email could not be sent
     */
-   public function sendMessage(Mailgun $mailgun, $cfg)
+   public function sendMessage(Mailgun $mailgun, $from, $to, $subject, $text)
    {
-      return $mailgun->sendMessage($cfg['domain'], [
-         'from' => $cfg['sender'],
-         'to' => $cfg['recipient'],
-         'subject' => 'new log record: '.$this->record->getName(),
-         'text' => $this->createEmailBody()
+      $domain = Config::getRequired("sndsgd.log.writer.mailgun.domain");
+      return $mailgun->sendMessage($domain, [
+         "from" => $from,
+         "to" => $to,
+         "subject" => $subject,
+         "text" => $text
       ]);
    }
 
