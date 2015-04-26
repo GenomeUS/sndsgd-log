@@ -14,18 +14,18 @@ class RecordTest extends \PHPUnit_Framework_TestCase
 
    public function testCreate()
    {
-      $name = 'test';
-      $message = 'test message';
+      $name = "test";
+      $message = "test message";
       $r = Record::create($name, $message);
-      $this->assertInstanceOf('sndsgd\\log\\Record', $r);
+      $this->assertInstanceOf("sndsgd\\log\\Record", $r);
       $this->assertEquals($name, $r->getName());
       $this->assertEquals($message, $r->getMessage());
    }
 
    public function testSetGetName()
    {
-      $this->r->setName('test');
-      $this->assertEquals('test', $this->r->getName());
+      $this->r->setName("test");
+      $this->assertEquals("test", $this->r->getName());
    }
 
    /**
@@ -41,7 +41,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     */
    public function testSetNameRegexException()
    {
-      $this->r->setName('asdf 09u132487y9 07 o&YI*(&ty');
+      $this->r->setName("asdf 09u132487y9 07 o&YI*(&ty");
    }
 
    public function testDateAndTimestamp()
@@ -50,13 +50,13 @@ class RecordTest extends \PHPUnit_Framework_TestCase
       $this->assertTrue(is_float($timestamp));
       $this->assertTrue($timestamp < microtime(true));
 
-      $date = $this->r->getDate();
-      $this->assertEquals(date('r', floor($timestamp)), $date);
+      $date = $this->r->getDate("r");
+      $this->assertEquals(date("r", $timestamp), $date);
    }
 
    public function testSetAndGetMessage()
    {
-      $this->assertEquals('', $this->r->getMessage());
+      $this->assertEquals("", $this->r->getMessage());
       $this->r->setMessage("test \n  test ");
       $this->assertEquals("test test", $this->r->getMessage());
 
@@ -76,14 +76,14 @@ class RecordTest extends \PHPUnit_Framework_TestCase
    {
       $this->assertEquals([], $this->r->getData());
 
-      $this->r->addData('one', 1);
-      $this->assertEquals(['one' => 1], $this->r->getData());
+      $this->r->addData("one", 1);
+      $this->assertEquals(["one" => 1], $this->r->getData());
 
       $this->r->addData([
-         'two' => 2,
-         'three' => 3
+         "two" => 2,
+         "three" => 3
       ]);
-      $this->assertEquals(['one'=>1,'two'=>2,'three'=>3], $this->r->getData());
+      $this->assertEquals(["one"=>1,"two"=>2,"three"=>3], $this->r->getData());
    }
 
    /**
@@ -91,7 +91,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     */
    public function testWriteInvalidStringArgument()
    {
-      $this->r->write('invalid');
+      $this->r->write("invalid");
    }
 
    /**

@@ -3,10 +3,9 @@
 namespace sndsgd\log\writer;
 
 use \Exception;
-use \sndsgd\log\FileInterface;
-use \sndsgd\log\Record;
 use \sndsgd\Config;
-use \sndsgd\Path;
+use \sndsgd\log\File;
+use \sndsgd\log\Record;
 
 
 /**

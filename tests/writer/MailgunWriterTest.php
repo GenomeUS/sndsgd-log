@@ -1,6 +1,6 @@
 <?php
 
-namespace sndsgd\log\mailgun;
+namespace sndsgd\log\writer;
 
 use \ReflectionClass;
 use \Mailgun\Mailgun;
@@ -8,9 +8,9 @@ use \sndsgd\log\Record;
 use \sndsgd\Config;
 
 /**
- * @coversDefaultClass \sndsgd\log\mailgun\Writer
+ * @coversDefaultClass \sndsgd\log\writer\MailgunWriter
  */
-class WriterTest extends \PHPUnit_Framework_TestCase
+class MailgunWriterTest extends \PHPUnit_Framework_TestCase
 {
    /**
     * @coversNothing
@@ -26,10 +26,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
    public function setUp()
    {
       Config::init([
-         "sndsgd.log.writer.mailgun.apiKey" => "blegh",
-         "sndsgd.log.writer.mailgun.domain" => "example.com",
-         "sndsgd.log.writer.mailgun.senderAddress" => "test@example.com",
-         "sndsgd.log.writer.mailgun.recipientAddress" => "nobody@example.com"
+         "mailgun.apiKey" => "blegh",
+         "mailgun.domain" => "example.com",
+         "sndsgd.log.writer.email.senderAddress" => "test@example.com",
+         "sndsgd.log.writer.email.recipientAddress" => "nobody@example.com"
       ]);
 
       $this->r = Record::create("test", "this is the message");
@@ -57,7 +57,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
    {
       $sender = "sender@domain.com";
       $recipient = "recipient@domain.com";
-      $w = new Writer;
+      $w = new MailgunWriter;
       $w->setSender($sender);
       $this->assertEquals($sender, $this->getPropertyValue($w, "sender"));
       $w->setRecipient($recipient);
@@ -70,7 +70,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     */
    public function testSetSenderInvalidEmail()
    {
-      $writer = new Writer;
+      $writer = new MailgunWriter;
       $writer->setSender("asd");
    }
 
@@ -80,7 +80,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
    public function testSetSubject()
    {
       $subject = "test subject";
-      $w = new Writer;
+      $w = new MailgunWriter;
       $w->setSubject($subject);
       $this->assertEquals($subject, $this->getPropertyValue($w, "subject"));
    }
@@ -92,7 +92,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
    {
       $apikey = Config::get("sndsgd.log.writer.mailgun.apiKey");
 
-      $writer = $this->getMockBuilder("sndsgd\\log\\mailgun\\Writer")->getMock();
+      $writer = $this->getMockBuilder("sndsgd\\log\\writer\\MailgunWriter")->getMock();
       $writer->method("sendMessage")->willReturn(true);
 
       $this->r->write($writer);
@@ -104,7 +104,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     */
    public function testSendEmailException()
    {
-      $this->r->write("sndsgd\\log\\mailgun\\Writer");
+      $this->r->write("sndsgd\\log\\writer\\MailgunWriter");
    }
 
    /**
@@ -113,7 +113,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
    public function testWriteMissingConfigException()
    {
       Config::init();
-      $this->r->write("sndsgd\\log\\mailgun\\Writer");
+      $this->r->write("sndsgd\\log\\writer\\MailgunWriter");
    }
 }
 

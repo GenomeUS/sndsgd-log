@@ -13,19 +13,18 @@ use \sndsgd\Config;
  */
 class AmazonSesWriter extends AbstractEmailWriter
 {
+   /**
+    * {@inheritdoc}
+    */
    public function write()
-   {
-      $client = $this->getSesClient();
-      $options = $this->getEmailOptions();
-      $result = $client->sendEmail($options);
-   }
-
-   private function getSesClient()
    {
       return SesClient::factory([
          "profile" => Config::getRequired("amazon.aws.ses.profile"),
          "region"  => Config::getRequired("amazon.aws.ses.region")
       ]);
+
+      $options = $this->getEmailOptions();
+      $this->sendEmail($client, $options);
    }
 
    private function getEmailOptions()
@@ -86,6 +85,11 @@ class AmazonSesWriter extends AbstractEmailWriter
           */
          "ReturnPath" => $this->getReturnPath()
       ];
+   }
+
+   private function sendEmail($client, $options)
+   {
+      $result = $client->sendEmail($options);
    }
 }
 
