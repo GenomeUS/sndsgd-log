@@ -3,6 +3,7 @@
 namespace sndsgd\log;
 
 use \InvalidArgumentException;
+use \sndsgd\Date;
 
 
 /**
@@ -38,7 +39,7 @@ class Record
     * 
     * @var string
     */
-   protected $name = 'error';
+   protected $name = "error";
 
    /**
     * A human readable message
@@ -68,18 +69,19 @@ class Record
    }
 
    /**
-    * Get a formatted version of the record timestamp using `date`
+    * Get a formatted version of the timestamp using `DateTime::format()`
     * 
     * @return string
     */
-   public function getDate($fmt = 'r')
+   public function getDate($fmt = "D, d M Y H:i:s.u O")
    {
-      return date($fmt, floor($this->timestamp));
+      $dt = Date::create($this->timestamp);
+      return $dt->format($fmt);
    }
 
    /**
     * @param string $name The name for the log 
-    * @return sndsgd\log\Record this object instance
+    * @return \sndsgd\log\Record this object instance
     */
    public function setName($name)
    {
@@ -89,7 +91,7 @@ class Record
       ) {
          throw new InvalidArgumentException(
             "invalid value provided for 'name'; expecting a string that ".
-            "contains only alphanumeric characters, underscore (_), ".
+            "contains only letters, numbers, underscore (_), ".
             "and dash (-)"
          );
       }

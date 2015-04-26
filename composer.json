@@ -17,11 +17,14 @@
    "require": {
       "php": ">=5.4.0",
       "sndsgd/util": "~0.5",
-      "mailgun/mailgun-php": "~1.7"
+      "sndsgd/fs": "~0.1"
    },
    "require-dev": {
       "phpunit/phpunit": "~4.0",
-      "mikey179/vfsStream": "~1.4.0"
+      "mikey179/vfsStream": "~1.4.0",
+      "aws/aws-sdk-php": "2.*",
+      "mailgun/mailgun-php": "~1.7",
+      "mandrill/mandrill": "1.0.*"
    },
    "autoload": {
       "psr-4": {

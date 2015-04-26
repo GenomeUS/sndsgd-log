@@ -1,34 +1,46 @@
 <?php
 
-namespace sndsgd\log\mailgun;
+namespace sndsgd\log\writer;
 
 use \Exception;
 use \InvalidArgumentException;
-use \Mailgun\Mailgun;
 use \sndsgd\Config;
 use \sndsgd\Json;
 
 
 /**
- * A log writer for Mailgun
- * 
- * @see [http://www.mailgun.com/](http://www.mailgun.com/)
+ * A base class for email writers
  */
-class Writer extends \sndsgd\log\Writer
+abstract class AbstractEmailWriter extends \sndsgd\log\Writer
 {
    /**
-    * The email sender (overrides the config sender)
+    * The email sender (overrides config value)
     * 
     * @var string
     */
    protected $sender;
 
    /**
-    * The email recipient (overrides the config recipient)
+    * The email recipient (overrides config value)
     * 
     * @var string
     */
    protected $recipient;
+
+   /**
+    * The email replyto address (overrides config value)
+    * 
+    * @var string
+    */
+   protected $replyTo;
+
+   /**
+    * The email returnpath address (overrides config value)
+    * 
+    * @var string
+    */
+   protected $returnPath;
+
 
    /**
     * The email subject
@@ -36,22 +48,6 @@ class Writer extends \sndsgd\log\Writer
     * @var string
     */
    protected $subject;
-
-
-   /**
-    * {@inheritdoc}
-    */
-   public function write()
-   {
-      $apikey = Config::getRequired("sndsgd.log.writer.mailgun.apiKey");
-      return $this->sendMessage(
-         new Mailgun($apikey),
-         $this->getSender(),
-         $this->getRecipient(),
-         $this->getSubject(),
-         $this->createEmailBody()
-      );
-   }
 
    /**
     * Override the sender address specified in the config
@@ -73,6 +69,11 @@ class Writer extends \sndsgd\log\Writer
       $this->recipient = $this->validateEmail($email);
    }
 
+   /**
+    * @param string $email
+    * @return string
+    * @throws InvalidArgumentException If the email is not valid
+    */
    private function validateEmail($email)
    {
       $email = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -87,6 +88,7 @@ class Writer extends \sndsgd\log\Writer
 
    /**
     * Set the message subject
+    * 
     * @param string $subject
     */
    public function setSubject($subject)
@@ -94,56 +96,51 @@ class Writer extends \sndsgd\log\Writer
       $this->subject = $subject;
    }
 
-   private function getSender()
+   protected function getSender()
    {
       return ($this->sender !== null) 
          ? $this->sender
-         : Config::getRequired("sndsgd.log.writer.mailgun.senderAddress");
+         : Config::getRequired("sndsgd.log.writer.email.senderAddress");
    }
 
-   private function getRecipient()
+   protected function getRecipient()
    {
       return ($this->recipient !== null) 
          ? $this->recipient
-         : Config::getRequired("sndsgd.log.writer.mailgun.recipientAddress");
+         : Config::getRequired("sndsgd.log.writer.email.recipientAddress");
    }
 
-   private function getSubject()
+   protected function getReplyTo()
+   {
+      return ($this->replyTo !== null) 
+         ? $this->replyTo
+         : Config::getRequired("sndsgd.log.writer.email.replyToAddress");
+   }
+
+   protected function getReturnPath()
+   {
+      return ($this->returnPath !== null) 
+         ? $this->returnPath
+         : Config::getRequired("sndsgd.log.writer.email.returnPathAddress");
+   }
+
+   protected function getSubject()
    {
       return ($this->subject !== null)
          ? $this->subject
          : "new log record: ".$this->record->getName();
    }
 
-   /**
-    * Send the message
-    *
-    * Note: this method exists, and is public so it can be mocked
-    * @param Mailgun $mailgun
-    * @param array.<string,string> $cfg Config values for Mailgun
-    * @return boolean
-    * @throws Exception If the email could not be sent
-    */
-   public function sendMessage(Mailgun $mailgun, $from, $to, $subject, $text)
-   {
-      $domain = Config::getRequired("sndsgd.log.writer.mailgun.domain");
-      return $mailgun->sendMessage($domain, [
-         "from" => $from,
-         "to" => $to,
-         "subject" => $subject,
-         "text" => $text
-      ]);
-   }
+
 
    /**
     * Create an email body from the record
     * 
     * @return string
     */
-   private function createEmailBody()
+   protected function createEmailBody()
    {
       $ret = 
-         "timestamp: ".$this->record->getTimestamp()."\n".
          "date: ".$this->record->getDate()."\n".
          'message: '.$this->record->getMessage()."\n\n".
          'data: '.json_encode($this->record->getData(), Json::HUMAN)."\n";
