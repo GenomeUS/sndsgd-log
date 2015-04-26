@@ -35,10 +35,10 @@ $record->addData("server", $_SERVER);
 To *write* a log record, pass an instance(s) of ```sndsgd\log\Writer```, or the name(s) of one or more subclass(es) of ```sndsgd\log\Writer``` to the ```write``` method on a record instance.
 
 ```php
-use \sndsgd\log\mailgun\Writer as MailgunWriter;
+use \sndsgd\log\writer\MailgunWriter;
 
 # providing a writer classname
-$record->write("sndsgd\\log\\file\\Writer");
+$record->write("sndsgd\\log\\writer\\FileWriter");
 
 # providing a writer instance
 # this is helpful when the writer has options
@@ -48,6 +48,6 @@ $writer->setRecipient("emergency.contact@domain.com");
 $record->write($writer);
 
 # note: you can write to multiple writers in one go
-$record->write("sndsgd\\log\\file\\Writer", $writer);
+$record->write("sndsgd\\log\\writer\\FileWriter", $writer);
 ```
 
